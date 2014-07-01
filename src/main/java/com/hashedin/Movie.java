@@ -12,10 +12,11 @@ import java.util.StringTokenizer;
 
 public class Movie {
 	
-	public void getMovies(){
-		InputStream is=(this.getClass().getClassLoader().getResourceAsStream("movie.data"));
+	public Map<String, MovieRecomendor> getMovies(String file){
+		InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
 		Map<String,MovieRecomendor> moviemap=getStringFromInputStream(is);
-		System.out.println(moviemap);
+		//System.out.println(moviemap);
+		return moviemap;
 	}
 	private Map<String, MovieRecomendor> getStringFromInputStream(InputStream is) {
 		
@@ -62,23 +63,10 @@ public class Movie {
 		return mr;
 	}
 	public static void main(String[] args){
-		Movie mn=new Movie();
-		mn.getMovies();
-//		try {
-//			fis = new FileInputStream(file);
-//			
-//			System.out.println("Total file size to read (in bytes) : "
-//					+ fis.available());
-// 
-//			int content;
-//			while ((content = fis.read()) != -1) {
-//				// convert to char and display it
-//				System.out.print((char) content);
-//			}
-// 
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		Movie mov=new Movie();
+		Map<String,MovieRecomendor> movhmap = new HashMap<String, MovieRecomendor>();
+		movhmap=mov.getMovies("movie.data");
+		
 	}
 	
 }
