@@ -199,9 +199,9 @@ public ArrayList<String> GenreMap(String file) {
 		return mr;
 	}
 	
-	public ArrayList<Integer> getValue(InputStream is, int n){
+	public ArrayList<Integer> getValue(String file, int n){
 BufferedReader br = null;
-		
+InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
 ArrayList<Integer> mid = new ArrayList<Integer>();
 		String line;
 		try {
@@ -231,6 +231,7 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 		String token=new String();
 		StringTokenizer st2 = new StringTokenizer(line, "|");
 		int i=0;
+		n+=5;
 		int mid=Integer.parseInt(st2.nextToken().toString());
 		while (i<=n) {
            token  = st2.nextToken().toString();
@@ -264,8 +265,9 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 		}
 		String genre="Adventure";
 		int arrindex=genrelist.indexOf(genre);
-		
-		
+		ArrayList<Integer> mids=new ArrayList<Integer>();
+		mids=mov.getValue("movie.data",arrindex);
+		System.out.println(mids);
 	}
 	
 }
