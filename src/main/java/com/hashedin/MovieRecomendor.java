@@ -1,15 +1,15 @@
 package com.hashedin;
 
 public class MovieRecomendor {
-	private String id;
+	private int id;
 	private String name;
 	private String year;
 	private String date;
 	private String url;
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getName() {
@@ -38,7 +38,7 @@ public class MovieRecomendor {
 	}
 	@Override
 	public String toString() {
-		return "MovieRecomendor [id=" + id + ", name=" + name + ", year="
+		return "[id=" + id + ", name=" + name + ", year="
 				+ year + ", date=" + date + ", url=" + url + "]";
 	}
 	
