@@ -6,6 +6,7 @@ public class MovieRecomendor {
 	private String year;
 	private String date;
 	private String url;
+	
 	public int getId() {
 		return id;
 	}

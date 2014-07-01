@@ -121,7 +121,7 @@ private Map<String, MovieUser> UserMap(InputStream is) {
 	return moviemap;
 
 }
-private ArrayList<String> GenreMap(String file) {
+public ArrayList<String> GenreMap(String file) {
 	
 	
 	InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
@@ -199,6 +199,49 @@ private ArrayList<String> GenreMap(String file) {
 		return mr;
 	}
 	
+	public ArrayList<Integer> getValue(InputStream is, int n){
+BufferedReader br = null;
+		
+ArrayList<Integer> mid = new ArrayList<Integer>();
+		String line;
+		try {
+			
+			br = new BufferedReader(new InputStreamReader(is));
+			
+			while ((line = br.readLine()) != null) {
+				mid.add(getGenreValue(line,n));
+				
+			}
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+ 
+		return mid;
+	}
+	private  int getGenreValue(String line, int n) {
+		String token=new String();
+		StringTokenizer st2 = new StringTokenizer(line, "|");
+		int i=0;
+		int mid=Integer.parseInt(st2.nextToken().toString());
+		while (i<=n) {
+           token  = st2.nextToken().toString();
+           
+            i++;
+        }
+		if(token =="1")
+		return mid;
+		return -1;
+	}
+	
 	public static void main(String[] args){
 		Movie mov=new Movie();
 		Map<String,MovieRecomendor> movhmap = new HashMap<String, MovieRecomendor>();
@@ -207,9 +250,22 @@ private ArrayList<String> GenreMap(String file) {
 		rathmap=mov.getRatings("ratings.data");
 		Map<String,MovieUser> userhmap = new HashMap<String, MovieUser>();
 		userhmap=mov.getUsers("user.data");
-		ArrayList<String> genre= new ArrayList<String>();
-		genre=mov.GenreMap("genre.data");
-		System.out.println(genre);
+		ArrayList<String> genrelist= new ArrayList<String>();
+		genrelist=mov.GenreMap("genre.data");
+		System.out.println(genrelist);
+		
+		System.out.println("Select Genre");
+		int i=0;
+		for(String s : genrelist)
+		{
+			i++;
+			System.out.println(i + ". " + s);
+			
+		}
+		String genre="Adventure";
+		int arrindex=genrelist.indexOf(genre);
+		
+		
 	}
 	
 }
