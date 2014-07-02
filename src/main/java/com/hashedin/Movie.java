@@ -202,7 +202,7 @@ public ArrayList<String> GenreMap(String file) {
 		return mr;
 	}
 	
-	public ArrayList<Integer> getValue(String file, int n){
+	public ArrayList<Integer> getGenre(String file, int n){
 BufferedReader br = null;
 InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
 ArrayList<Integer> mid = new ArrayList<Integer>();
@@ -230,18 +230,112 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
  
 		return mid;
 	}
-	private  int getGenreValue(String line, int n) {
+	public ArrayList<Integer> getYear(String file, String year){
+		BufferedReader br = null;
+		InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
+		ArrayList<Integer> mid = new ArrayList<Integer>();
+				String line;
+				try {
+					
+					br = new BufferedReader(new InputStreamReader(is));
+					
+					while ((line = br.readLine()) != null) {
+						mid.add(getYearValue(line,year));
+						
+					}
+		 
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					if (br != null) {
+						try {
+							br.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+		 
+				return mid;
+			}
+	public ArrayList<Integer> getYearGenre(String file, String year, int n){
+		BufferedReader br = null;
+		InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
+		ArrayList<Integer> mid = new ArrayList<Integer>();
+				String line;
+				try {
+					
+					br = new BufferedReader(new InputStreamReader(is));
+					
+					while ((line = br.readLine()) != null) {
+						mid.add(getYearValue(line,year));
+						
+					}
+		 
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					if (br != null) {
+						try {
+							br.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+		 
+				return mid;
+			}
+	private  int getYearValue(String line, String year) {
+		
 		String token=new String();
-		StringTokenizer st2 = new StringTokenizer(line, "|");
-		int i=1;
-		n+=5;
-		int mid=Integer.parseInt(st2.nextToken().toString());
-		while (i<n) {
-           token  = st2.nextToken().toString();
-           
-            i++;
-        }
-		int test=Integer.parseInt(token);
+
+		
+		ArrayList<String> val1=new ArrayList<String>(Arrays.asList(line.split("\\|")));
+		int mid=Integer.parseInt(val1.get(0));
+		int syear=0;
+		token=val1.get(2);
+		int bool=token.compareTo("");
+		if(bool>0){
+		ArrayList<String> mdate = new ArrayList<String>(Arrays.asList(token.split("-")));
+		syear=Integer.parseInt((mdate.get(2)));
+		}
+		int val=-1;
+		if(syear==Integer.parseInt(year))
+		{
+		val=mid;
+		}
+		return val;
+	}
+private  int getYearGenreValue(String line, String year, int n) {
+		
+		String token=new String();
+
+		
+		ArrayList<String> val1=new ArrayList<String>(Arrays.asList(line.split("\\|")));
+		int mid=Integer.parseInt(val1.get(0));
+		int syear=0;
+		token=val1.get(2);
+		int test=Integer.parseInt(val1.get(5+n));
+		int bool=token.compareTo("");
+		
+		if(bool>0){
+		ArrayList<String> mdate = new ArrayList<String>(Arrays.asList(token.split("-")));
+		syear=Integer.parseInt((mdate.get(2)));
+		}
+		int val=-1;
+		if((test==1)&&(syear==Integer.parseInt(year)))
+		{
+		val=mid;
+		}
+		return val;
+	}
+	private  int getGenreValue(String line, int n) {
+		ArrayList<String> val1=new ArrayList<String>(Arrays.asList(line.split("\\|")));
+		int mid=Integer.parseInt(val1.get(0));
+		//int syear=0;
+	
+		int test=Integer.parseInt(val1.get(5+n));
 		int val=-1;
 		if(test==1)
 		{
@@ -259,8 +353,78 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 		rathmap=mov.getRatings("ratings.data");
 		Map<String,MovieUser> userhmap = new HashMap<String, MovieUser>();
 		userhmap=mov.getUsers("user.data");
-		String MovieName=mov.getMovieByGenre(rathmap, movhmap, mov,"movie.data");
+		String MovieName=mov.getMovieByYear(rathmap, movhmap, mov,"movie.data");
 		System.out.println(MovieName);
+		String MovieName1=mov.getMovieByYearGenre(rathmap, movhmap, mov,"movie.data");
+		System.out.println(MovieName1);
+		String MovieName2=mov.getMovieByGenre(rathmap, movhmap, mov,"movie.data");
+		System.out.println(MovieName2);
+		
+	}
+	public String getMovieByYear(ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap,Movie mov, String File){
+		ArrayList<String> genrelist= new ArrayList<String>();
+		genrelist=mov.GenreMap("genre.data");
+		System.out.println(genrelist);
+		String year="1997";
+		
+		
+		ArrayList<Integer> mids=new ArrayList<Integer>();
+		mids=mov.getYear(File,year);
+		ArrayList<Integer> newmids=new ArrayList<Integer>();
+		ArrayList<Integer> averagelist=new ArrayList<Integer>();
+		
+		for(int d:mids){
+			if(d!=-1)
+			{
+				newmids.add(d);
+			}
+		}
+		//System.out.println(newmids);
+		
+		int fmid=mov.getByGenre(newmids, rathmap);
+		
+		MovieRecomendor mrd=new MovieRecomendor();
+		mrd=movhmap.get(Integer.toString(fmid));
+		return mrd.getName();
+		
+	}
+	public String getMovieByYearGenre(ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap,Movie mov, String File){
+		ArrayList<String> genrelist= new ArrayList<String>();
+		genrelist=mov.GenreMap("genre.data");
+		System.out.println(genrelist);
+		String year="1995";
+		
+		genrelist=mov.GenreMap("genre.data");
+		System.out.println(genrelist);
+		String genre="Action";
+		System.out.println("Select Genre");
+		int i=0;
+		for(String s : genrelist)
+		{
+			i++;
+			System.out.println(i + ". " + s);
+			
+		}
+		int arrindex=genrelist.indexOf(genre);
+		
+		ArrayList<Integer> mids=new ArrayList<Integer>();
+		mids=mov.getYearGenre(File,year,arrindex);
+		ArrayList<Integer> newmids=new ArrayList<Integer>();
+		ArrayList<Integer> averagelist=new ArrayList<Integer>();
+		
+		for(int d:mids){
+			if(d!=-1)
+			{
+				newmids.add(d);
+			}
+		}
+		//System.out.println(newmids);
+		
+		int fmid=mov.getByGenre(newmids, rathmap);
+		
+		MovieRecomendor mrd=new MovieRecomendor();
+		mrd=movhmap.get(Integer.toString(fmid));
+		return mrd.getName();
 		
 	}
 	
@@ -268,7 +432,7 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 		ArrayList<String> genrelist= new ArrayList<String>();
 		genrelist=mov.GenreMap("genre.data");
 		System.out.println(genrelist);
-		String genre="Mystery";
+		String genre="Animation";
 		System.out.println("Select Genre");
 		int i=0;
 		for(String s : genrelist)
@@ -279,7 +443,7 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 		}
 		int arrindex=genrelist.indexOf(genre);
 		ArrayList<Integer> mids=new ArrayList<Integer>();
-		mids=mov.getValue(File,arrindex);
+		mids=mov.getGenre(File,arrindex);
 		ArrayList<Integer> newmids=new ArrayList<Integer>();
 		ArrayList<Integer> averagelist=new ArrayList<Integer>();
 		
@@ -317,13 +481,7 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 		for(int item: mids){
 			int average=0,count=0,oaverage=0;
 		for(MovieRatings id: mapmid){
-		//ArrayList<String> val=new ArrayList<String>(Arrays.asList(id.split(",")));
-		//String data=val.get(2);
-		//	ArrayList<String> arr=new ArrayList<String>(Arrays.asList(data.split(",")));
-//			String[] movidarr=(val.get(1)).split("=");
-//			String[] ratingarr=(val.get(2)).split("=");
-//			String movid=movidarr[1];
-//			String rating=ratingarr[1];
+	
 			
 	        if((id.getMid()==item)){
 	        	int rating=id.getRating();
