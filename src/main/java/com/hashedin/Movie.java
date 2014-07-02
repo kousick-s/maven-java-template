@@ -259,16 +259,16 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 		rathmap=mov.getRatings("ratings.data");
 		Map<String,MovieUser> userhmap = new HashMap<String, MovieUser>();
 		userhmap=mov.getUsers("user.data");
-		String MovieName=mov.getMovieByGenre(rathmap, movhmap, mov);
+		String MovieName=mov.getMovieByGenre(rathmap, movhmap, mov,"movie.data");
 		System.out.println(MovieName);
 		
 	}
 	
-	public String getMovieByGenre(ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap,Movie mov){
+	public String getMovieByGenre(ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap,Movie mov, String File){
 		ArrayList<String> genrelist= new ArrayList<String>();
 		genrelist=mov.GenreMap("genre.data");
 		System.out.println(genrelist);
-		String genre="Adventure";
+		String genre="Mystery";
 		System.out.println("Select Genre");
 		int i=0;
 		for(String s : genrelist)
@@ -279,7 +279,7 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 		}
 		int arrindex=genrelist.indexOf(genre);
 		ArrayList<Integer> mids=new ArrayList<Integer>();
-		mids=mov.getValue("movie.data",arrindex);
+		mids=mov.getValue(File,arrindex);
 		ArrayList<Integer> newmids=new ArrayList<Integer>();
 		ArrayList<Integer> averagelist=new ArrayList<Integer>();
 		
@@ -289,16 +289,12 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 				newmids.add(d);
 			}
 		}
-		System.out.println(newmids);
+		//System.out.println(newmids);
 		
 		int fmid=mov.getByGenre(newmids, rathmap);
-		System.out.println(averagelist);
-		System.out.println(averagelist.size());
-		System.out.println(newmids.size());
-		System.out.println(fmid);
+		
 		MovieRecomendor mrd=new MovieRecomendor();
 		mrd=movhmap.get(Integer.toString(fmid));
-		System.out.println(mrd.getName());
 		return mrd.getName();
 	}
 	

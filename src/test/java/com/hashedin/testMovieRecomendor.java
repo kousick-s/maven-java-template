@@ -17,7 +17,7 @@ public class testMovieRecomendor {
 		rathmap=mov.getRatings("test_ratings.data");
 		Map<String,MovieUser> userhmap = new HashMap<String, MovieUser>();
 		userhmap=mov.getUsers("test_user.data");
-		String MovieName=mov.getMovieByGenre(rathmap, movhmap, mov);
+		String MovieName=mov.getMovieByGenre(rathmap, movhmap, mov,"test_movie.data");
 		System.out.println(MovieName);
 		
 	}
