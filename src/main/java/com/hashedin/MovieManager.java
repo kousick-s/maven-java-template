@@ -710,18 +710,16 @@ public class MovieManager {
 				// avoids a ConcurrentModificationException
 			}
 		}
-		float average = 0, oaverage = 0;
-		int count = 1;
 		for (int item : mids) {
-			
+			float average = 0, oaverage = 0;
+			int count = 1;
 			for (MovieRatings id : mapmid) {
-					
+
 				if ((id.getMid() == item)) {
 					float rating = id.getRating();
 					average = average + (rating);
 					count++;
 					average = average / count;
-					
 
 				}
 
