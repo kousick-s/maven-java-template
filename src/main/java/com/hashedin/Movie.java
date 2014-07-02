@@ -17,26 +17,29 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Movie {
-	
+	// Start of Getting Movies in to a Map
 	public Map<String, MovieRecomendor> getMovies(String file){
 		InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
 		Map<String,MovieRecomendor> moviemap=getStringFromInputStream(is);
-	//	System.out.println(moviemap);
 		return moviemap;
 	}
+	// End of Getting Movies in to a Map
+	
+	// Start of Getting Ratings in to a ArrayList
 	public ArrayList<MovieRatings> getRatings(String file){
 		InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
 		ArrayList<MovieRatings> moviemap=RatingMap(is);
-		//System.out.println(moviemap);
 		return moviemap;
 	}
+	// Start of Getting Ratings in to a ArrayList
 	public Map<String, MovieUser> getUsers(String file){
 		InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
 		Map<String,MovieUser> moviemap=UserMap(is);
-		//System.out.println(moviemap);
 		return moviemap;
 	}
+	// End  of Getting Ratings in to a ArrayList
 	
+	// Start of Returning Map to GetMovies Function
 	
 	private Map<String, MovieRecomendor> getStringFromInputStream(InputStream is) {
 		
@@ -68,6 +71,10 @@ public class Movie {
 		return moviemap;
  
 	}
+	
+	// End of Returning Map to GetMovies Function
+	
+	// Start of Returning Map to GetRatings Function
 private ArrayList<MovieRatings> RatingMap(InputStream is) {
 		ArrayList<MovieRatings> moviemap =new ArrayList<MovieRatings>();
 		//Map<String,MovieRatings> moviemap = new HashMap<String, MovieRatings>();
@@ -96,6 +103,9 @@ private ArrayList<MovieRatings> RatingMap(InputStream is) {
 		return moviemap;
  
 	}
+//End of Returning Map to GetRatings Function
+
+//Start of Returning Map to GetUser Function
 private Map<String, MovieUser> UserMap(InputStream is) {
 	
 	Map<String,MovieUser> moviemap = new HashMap<String, MovieUser>();
@@ -124,6 +134,7 @@ private Map<String, MovieUser> UserMap(InputStream is) {
 	return moviemap;
 
 }
+//End of Returning Map to GetUser Function
 public ArrayList<String> GenreMap(String file) {
 	
 	
@@ -230,6 +241,10 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
  
 		return mid;
 	}
+	
+	
+	
+	
 	public ArrayList<Integer> getYear(String file, String year){
 		BufferedReader br = null;
 		InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
@@ -343,6 +358,53 @@ private  int getYearGenreValue(String line, String year, int n) {
 		}
 		return val;
 	}
+	public ArrayList<Integer> getGenreSet(String file, int MovId){
+		BufferedReader br = null;
+		InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
+		ArrayList<Integer> gid = new ArrayList<Integer>();
+				String line;
+				try {
+					
+					br = new BufferedReader(new InputStreamReader(is));
+					
+					while ((line = br.readLine()) != null) {
+						ArrayList<String> val1=new ArrayList<String>(Arrays.asList(line.split("\\|")));
+						int mid=Integer.parseInt(val1.get(0));
+						if(mid==MovId){
+							gid=(getGenreNameValue(line));
+							break;
+						}
+						
+						
+					}
+		 
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					if (br != null) {
+						try {
+							br.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+		 
+				return gid;
+			}
+	private  ArrayList<Integer> getGenreNameValue(String line) {
+		ArrayList<String> val1=new ArrayList<String>(Arrays.asList(line.split("\\|")));
+		ArrayList<Integer> gid = new ArrayList<Integer>();
+		//int i=5;
+		for(int i=5;i<val1.size();i++){
+			String gvalue=val1.get(i).toString();
+			if(gvalue.equals("1")){
+				gid.add(i-5);
+			}
+		}
+		return gid;
+		
+	}
 	
 	public static void main(String[] args){
 		Movie mov=new Movie();
@@ -353,14 +415,18 @@ private  int getYearGenreValue(String line, String year, int n) {
 		rathmap=mov.getRatings("ratings.data");
 		Map<String,MovieUser> userhmap = new HashMap<String, MovieUser>();
 		userhmap=mov.getUsers("user.data");
-		String MovieName=mov.getMovieByYear(rathmap, movhmap, mov,"movie.data");
-		System.out.println(MovieName);
-		String MovieName1=mov.getMovieByYearGenre(rathmap, movhmap, mov,"movie.data");
-		System.out.println(MovieName1);
-		String MovieName2=mov.getMovieByGenre(rathmap, movhmap, mov,"movie.data");
-		System.out.println(MovieName2);
+		String MovieNamebyYear=mov.getMovieByYear(rathmap, movhmap, mov,"movie.data");
+		System.out.println("Movie by Year -"+MovieNamebyYear);
+		String MovieNamebyYearGenre=mov.getMovieByYearGenre(rathmap, movhmap, mov,"test_movie.data");
+		System.out.println("Movie by Year and Genre -"+MovieNamebyYearGenre);
+		String MovieNamebyGenre=mov.getMovieByGenre(rathmap, movhmap, mov,"movie.data");
+		System.out.println("Movie by Genre -"+MovieNamebyGenre);
+		System.out.println("Most Active User -");
 		mov.getMostActiveUser(rathmap, userhmap);
-		
+		String MostWatchedGenres=mov.getMostWatchedGenre(mov, rathmap, movhmap);
+		System.out.println(" Most Watched Genres: " + MostWatchedGenres);
+		String HighestRatedGenres=mov.getHighestRatedGenre(mov,rathmap, movhmap);
+		System.out.println("Highest Rated Genres:"+HighestRatedGenres);
 		
 	}
 	
@@ -387,6 +453,81 @@ private  int getYearGenreValue(String line, String year, int n) {
 		return mrd.getName();
 		
 	}
+	
+	public String getHighestRatedGenre(Movie m,ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap){
+		ArrayList<Integer>movieIdList=new ArrayList<Integer>();
+		ArrayList<Integer>countList=new ArrayList<Integer>();
+		ArrayList<Float>MovieRatingList=new ArrayList<Float>();
+		ArrayList<Float>MovieAverageList=new ArrayList<Float>();
+		for(MovieRatings rats:rathmap){
+	        int iid=rats.getMid();
+	        	if(!movieIdList.contains(iid)){
+	        		movieIdList.add(iid);
+	        		countList.add(1);
+	        		MovieRatingList.add(rats.getRating());
+	        	}
+	        	else{
+	        		int tempcount=countList.get(movieIdList.indexOf(iid));
+	        		float tempaverage=MovieRatingList.get(movieIdList.indexOf(iid));
+	        		tempaverage=tempaverage+rats.getRating();
+	        		tempcount++;
+	        		int indx=movieIdList.indexOf(iid);
+	        		MovieRatingList.set(indx, tempaverage);
+	        		countList.set(indx,tempcount);
+	        	}
+		}
+		for(float tot:MovieRatingList){
+			int tempcount=countList.get(MovieRatingList.indexOf(tot));
+			float average=tot/tempcount;
+			MovieAverageList.add(average);
+		}
+		float maxcount=Collections.max(MovieAverageList);
+		int indexx=MovieAverageList.indexOf(maxcount);
+		int MovId=movieIdList.get(indexx);
+		MovieRecomendor mrd=new MovieRecomendor();
+		mrd=movhmap.get(Integer.toString(MovId));
+		String genre=getGenreName(m,MovId,movhmap);
+		return genre;
+		
+	}
+	
+	public String getMostWatchedGenre(Movie m,ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap){
+		ArrayList<Integer>movieIdList=new ArrayList<Integer>();
+		ArrayList<Integer>countList=new ArrayList<Integer>();
+		for(MovieRatings rats:rathmap){
+	        int iid=rats.getMid();
+	        	if(!movieIdList.contains(iid)){
+	        		movieIdList.add(iid);
+	        		countList.add(1);
+	        	}
+	        	else{
+	        		int tempcount=countList.get(movieIdList.indexOf(iid));
+	        		tempcount++;
+	        		int indx=movieIdList.indexOf(iid);
+	        		countList.set(indx,tempcount);
+	        	}
+		}
+		
+		int maxcount=Collections.max(countList);
+		
+		int MovId=movieIdList.get(countList.indexOf(maxcount));
+		String genre=getGenreName(m,MovId,movhmap);
+		return genre;
+		
+	}
+	public String getGenreName(Movie mov,int MovId,Map<String,MovieRecomendor> movhmap){
+		ArrayList<Integer>gid=new ArrayList<Integer>();
+		gid=getGenreSet("movie.data",MovId);
+		ArrayList<String> genrelist= new ArrayList<String>();
+		String genre="";
+		genrelist=mov.GenreMap("genre.data");
+		for(int id:gid){
+			genre=genre + " " + genrelist.get(id);
+		}
+		return genre;
+		
+	}
+	
 	
 	public void  getMostActiveUser(ArrayList<MovieRatings> rathmap,Map<String,MovieUser> userhmap){
 		ArrayList<Integer>movieIdList=new ArrayList<Integer>();
@@ -447,21 +588,15 @@ private  int getYearGenreValue(String line, String year, int n) {
 	}
 	public String getMovieByYearGenre(ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap,Movie mov, String File){
 		ArrayList<String> genrelist= new ArrayList<String>();
-		genrelist=mov.GenreMap("genre.data");
-		System.out.println(genrelist);
+		
+		
 		String year="1995";
 		
 		genrelist=mov.GenreMap("genre.data");
-		System.out.println(genrelist);
+		
 		String genre="Action";
-		System.out.println("Select Genre");
-		int i=0;
-		for(String s : genrelist)
-		{
-			i++;
-			System.out.println(i + ". " + s);
-			
-		}
+		
+		
 		int arrindex=genrelist.indexOf(genre);
 		
 		ArrayList<Integer> mids=new ArrayList<Integer>();
@@ -488,16 +623,10 @@ private  int getYearGenreValue(String line, String year, int n) {
 	public String getMovieByGenre(ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap,Movie mov, String File){
 		ArrayList<String> genrelist= new ArrayList<String>();
 		genrelist=mov.GenreMap("genre.data");
-		System.out.println(genrelist);
+		
 		String genre="Animation";
-		System.out.println("Select Genre");
-		int i=0;
-		for(String s : genrelist)
-		{
-			i++;
-			System.out.println(i + ". " + s);
-			
-		}
+		
+		
 		int arrindex=genrelist.indexOf(genre);
 		ArrayList<Integer> mids=new ArrayList<Integer>();
 		mids=mov.getGenre(File,arrindex);
@@ -520,7 +649,7 @@ private  int getYearGenreValue(String line, String year, int n) {
 	}
 	
 	public  int  getByGenre(ArrayList<Integer> mids,ArrayList<MovieRatings> m){
-		ArrayList<Integer> averagelist=new ArrayList<Integer>();
+		ArrayList<Float> averagelist=new ArrayList<Float>();
 		 ArrayList<MovieRatings> mapmid=new ArrayList<MovieRatings>();
 		 int fmid=0;
 		for(int item: mids){
@@ -536,12 +665,13 @@ private  int getYearGenreValue(String line, String year, int n) {
 		    }
 		}
 		for(int item: mids){
-			int average=0,count=0,oaverage=0;
+			float average=0,oaverage=0;
+			int count=0;
 		for(MovieRatings id: mapmid){
 	
 			
 	        if((id.getMid()==item)){
-	        	int rating=id.getRating();
+	        	float rating=id.getRating();
 	        	average=average+(rating);
 	        	count++;
 			    average=average/count;

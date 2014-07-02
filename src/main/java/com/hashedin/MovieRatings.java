@@ -3,7 +3,7 @@ package com.hashedin;
 public class MovieRatings {
 	private int uid;
 	private int mid;
-	private int rating;
+	private float rating;
 	private int timestamp;
 	public int getTimestamp() {
 		return timestamp;
@@ -23,10 +23,10 @@ public class MovieRatings {
 	public void setMid(int mid) {
 		this.mid = mid;
 	}
-	public int getRating() {
+	public float getRating() {
 		return rating;
 	}
-	public void setRating(int rating) {
+	public void setRating(float rating) {
 		this.rating = rating;
 	}
 	@Override
