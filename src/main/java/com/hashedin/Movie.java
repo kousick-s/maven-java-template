@@ -135,6 +135,8 @@ private Map<String, MovieUser> UserMap(InputStream is) {
 
 }
 //End of Returning Map to GetUser Function
+
+//Start of Returning Map to GetGenre Function
 public ArrayList<String> GenreMap(String file) {
 	
 	
@@ -166,10 +168,10 @@ public ArrayList<String> GenreMap(String file) {
 	return gnames;
 
 }
+//End of Returning Map to GetGenre Function
 
 
-
-	
+	// Start of Returning objects to Movies Function
 	private  MovieRecomendor getMovieobject(String line) {
 		MovieRecomendor mr=new MovieRecomendor();
 		StringTokenizer st2 = new StringTokenizer(line, "|");
@@ -183,11 +185,17 @@ public ArrayList<String> GenreMap(String file) {
 		mr.setYear(st2.nextElement().toString());
 		return mr;
 	}
+	// End of Returning objects to Movies Function
+	// Start of Returning objects to Genre Function
 	private  String getMovieGenre(String line) {
 		
 		StringTokenizer st2 = new StringTokenizer(line, "|");
 		return ((st2.nextElement().toString()) );
 	}
+	// End of Returning objects to Genre Function
+	
+	// Start of Returning objects to User Function
+	
 	private  MovieUser getUserObject(String line) {
 		MovieUser mr=new MovieUser();
 		StringTokenizer st2 = new StringTokenizer(line, "|");
@@ -199,6 +207,10 @@ public ArrayList<String> GenreMap(String file) {
 		mr.setZip(st2.nextElement().toString());
 		return mr;
 	}
+	
+	// Start of Returning objects to User Function
+	
+	// Start of Returning objects to Rating Function
 	
 	private  MovieRatings getRatingObject(String line) {
 		MovieRatings mr=new MovieRatings();
@@ -212,21 +224,24 @@ public ArrayList<String> GenreMap(String file) {
 		
 		return mr;
 	}
+	// End of Returning objects to Rating Function
 	
+	// Start of Getting GenreValues Based on Movie ID
 	public ArrayList<Integer> getGenre(String file, int n){
-BufferedReader br = null;
-InputStream is=(this.getClass().getClassLoader().getResourceAsStream(file));
-ArrayList<Integer> mid = new ArrayList<Integer>();
+		BufferedReader br = null;
+		InputStream is = (this.getClass().getClassLoader()
+				.getResourceAsStream(file));
+		ArrayList<Integer> mid = new ArrayList<Integer>();
 		String line;
 		try {
-			
+
 			br = new BufferedReader(new InputStreamReader(is));
-			
+
 			while ((line = br.readLine()) != null) {
-				mid.add(getGenreValue(line,n));
-				
+				mid.add(getGenreValue(line, n));
+
 			}
- 
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -238,12 +253,12 @@ ArrayList<Integer> mid = new ArrayList<Integer>();
 				}
 			}
 		}
- 
+
 		return mid;
 	}
 	
 	
-	
+	// End of Getting GenreValues Based on Movie ID
 	
 	public ArrayList<Integer> getYear(String file, String year){
 		BufferedReader br = null;
