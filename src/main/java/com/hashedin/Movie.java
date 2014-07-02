@@ -359,8 +359,65 @@ private  int getYearGenreValue(String line, String year, int n) {
 		System.out.println(MovieName1);
 		String MovieName2=mov.getMovieByGenre(rathmap, movhmap, mov,"movie.data");
 		System.out.println(MovieName2);
+		mov.getMostActiveUser(rathmap, userhmap);
+		
 		
 	}
+	
+	public String getMostWatchedMovie(ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap){
+		ArrayList<Integer>movieIdList=new ArrayList<Integer>();
+		ArrayList<Integer>countList=new ArrayList<Integer>();
+		for(MovieRatings rats:rathmap){
+	        int iid=rats.getMid();
+	        	if(!movieIdList.contains(iid)){
+	        		movieIdList.add(iid);
+	        		countList.add(1);
+	        	}
+	        	else{
+	        		int tempcount=countList.get(movieIdList.indexOf(iid));
+	        		tempcount++;
+	        		int indx=movieIdList.indexOf(iid);
+	        		countList.set(indx,tempcount);
+	        	}
+		}
+		int maxcount=Collections.max(countList);
+		int MovId=movieIdList.get(countList.indexOf(maxcount));
+		MovieRecomendor mrd=new MovieRecomendor();
+		mrd=movhmap.get(Integer.toString(MovId));
+		return mrd.getName();
+		
+	}
+	
+	public void  getMostActiveUser(ArrayList<MovieRatings> rathmap,Map<String,MovieUser> userhmap){
+		ArrayList<Integer>movieIdList=new ArrayList<Integer>();
+		ArrayList<Integer>countList=new ArrayList<Integer>();
+		for(MovieRatings rats:rathmap){
+	        int iid=rats.getUid();
+	        	if(!movieIdList.contains(iid)){
+	        		movieIdList.add(iid);
+	        		countList.add(1);
+	        	}
+	        	else{
+	        		int tempcount=countList.get(movieIdList.indexOf(iid));
+	        		tempcount++;
+	        		int indx=movieIdList.indexOf(iid);
+	        		countList.set(indx,tempcount);
+	        	}
+		}
+		int maxcount=Collections.max(countList);
+		int UserId=movieIdList.get(countList.indexOf(maxcount));
+		MovieUser mrd=new MovieUser();
+		mrd=userhmap.get(Integer.toString(UserId));
+		System.out.println("Name: Not Known");
+		System.out.println("UID: " + mrd.getUid());
+		System.out.println("Age: " + mrd.getAge());
+		System.out.println("Gender: " + mrd.getGender());
+		System.out.println("Occupation: " + mrd.getOccupation());
+		System.out.println("ZIP Code: " + mrd.getZip());
+		
+	}
+	
+	
 	public String getMovieByYear(ArrayList<MovieRatings> rathmap,Map<String,MovieRecomendor> movhmap,Movie mov, String File){
 		ArrayList<String> genrelist= new ArrayList<String>();
 		genrelist=mov.GenreMap("genre.data");
